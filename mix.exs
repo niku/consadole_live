@@ -29,7 +29,9 @@ defmodule ConsadoleLive.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [{:httpoison, "~> 0.7"},
-     {:floki, "~> 0.3"}]
+     {:floki, "~> 0.3"},
+     {:oauth, github: "tim/erlang-oauth"},
+     {:extwitter, "~> 0.4"}]
   end
 
   defp escript do
