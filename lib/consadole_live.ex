@@ -35,7 +35,7 @@ defmodule ConsadoleLive do
         :timer.sleep(1000 * 60) # sleep 60 seconds
         execute(twitter_pid, uri, dup_times + 1, hash)
       new_hash ->
-        Task.start(Consadole.Twitter, :post, parse(doc))
+        Task.start(ConsadoleLive.Twitter, :post, [twitter_pid, parse(doc)])
         :timer.sleep(1000 * 60) # sleep 60 seconds
         execute(twitter_pid, uri, 0, new_hash)
     end
