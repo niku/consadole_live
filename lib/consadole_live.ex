@@ -20,6 +20,7 @@ defmodule ConsadoleLive do
          [a]    -> {"",            Floki.text(a)}
          [a, b] -> {Floki.text(a), Floki.text(b)}
        end)
+    |> Enum.reverse
   end
 
   defp execute(_twitter_pid, _uri, dup_times, _hash) when 9 < dup_times do
