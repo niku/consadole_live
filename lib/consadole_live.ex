@@ -28,7 +28,7 @@ defmodule ConsadoleLive do
     exit(0)
   end
   defp execute(twitter_pid, uri, dup_times, hash) do
-    Logger.info("ConsadoleLive.execute dup_times: #{dup_times}, hash: #{hash}")
+    Logger.info("ConsadoleLive.execute dup_times: #{dup_times}, hash: #{inspect hash}")
     doc = fetch(uri)
     case hash(doc) do
       ^hash ->
