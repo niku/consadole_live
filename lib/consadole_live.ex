@@ -29,15 +29,21 @@ defmodule ConsadoleLive do
   end
   defp execute(twitter_pid, uri, dup_times, hash) do
     Logger.info("ConsadoleLive.execute dup_times: #{dup_times}, hash: #{inspect hash}")
-    doc = fetch(uri)
-    case hash(doc) do
-      ^hash ->
-        :timer.sleep(1000 * 60) # sleep 60 seconds
+    case HTTPoison.get(uri) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: doc}} ->
+        case hash(doc) do
+          ^hash ->
+            :timer.sleep(1000 * 60) # sleep 60 seconds
+            execute(twitter_pid, uri, dup_times + 1, hash)
+          new_hash ->
+            Task.start(ConsadoleLive.Twitter, :post, [twitter_pid, parse(doc)])
+            :timer.sleep(1000 * 60) # sleep 60 seconds
+            execute(twitter_pid, uri, 0, new_hash)
+        end
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        Logger.warn("ConsadoleLive.execute http error reason: #{inspect reason}")
+        :timer.sleep(1000 * 60)
         execute(twitter_pid, uri, dup_times + 1, hash)
-      new_hash ->
-        Task.start(ConsadoleLive.Twitter, :post, [twitter_pid, parse(doc)])
-        :timer.sleep(1000 * 60) # sleep 60 seconds
-        execute(twitter_pid, uri, 0, new_hash)
     end
   end
 end
